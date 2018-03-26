@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 	// Remove epsilon and add end character $
-	terms.erase(terms.find('e'));
+	terms.erase('e');
 	terms.insert('$');
 	cout<<"The terminals in the grammar are: ";
 	for(auto i = terms.begin(); i != terms.end(); ++i) {
@@ -146,7 +146,7 @@ int main(int argc, char const *argv[])
 				finished = true;
 				break;
 			}
-			firsts_copy.erase(firsts_copy.find('e'));
+			firsts_copy.erase('e');
 			next_list.insert(firsts_copy.begin(), firsts_copy.end());
 		}
 		// If the whole rhs can be skipped through epsilon or reaching the end
@@ -229,7 +229,7 @@ void find_first(vector< pair<char, string> > gram,
 
 				// Remove epsilon from firsts if not the last variable
 				if(ch + 1 != rhs.end()) {
-					firsts_copy.erase(firsts_copy.find('e'));
+					firsts_copy.erase('e');
 				}
 
 				// Append firsts of that variable
@@ -278,7 +278,7 @@ void find_follow(vector< pair<char, string> > gram,
 				break;
 			}
 			// Else next char has to be checked after appending firsts to follow
-			firsts_copy.erase(firsts_copy.find('e'));
+			firsts_copy.erase('e');
 			follows[non_term].insert(firsts_copy.begin(), firsts_copy.end());
 
 		}
