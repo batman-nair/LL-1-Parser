@@ -150,15 +150,15 @@ int main(int argc, char const *argv[])
 		}
 		// If the whole rhs can be skipped through epsilon or reaching the end
 		// Add follow to next list
-		if(ch == rhs.end() && !finished) {
-			next_list.insert(follows[prod->first]);
+		if(!finished) {
+			next_list.insert(follows[prod->first].begin(), follows[prod->first].end());
 		}
 
 
 		for(auto ch = next_list.begin(); ch != next_list.end(); ++ch) {
-			int row = non_terms.find(*ch) - non_terms.begin();
-			int col = terms.find(*ch) - terms.begin();
-			int prod_num = prod - gram.begin();
+			int row = distance(non_terms.begin(), non_terms.find(*ch));
+			int col = distance(terms.begin(), terms.find(*ch));
+			int prod_num = distance(gram.begin(), prod);
 			if(parse_table[row][col] != -1) {
 				cout<<"Collision at ["<<row<<"]["<<col<<"] for production "<<prod_num<<"\n";
 				continue;
@@ -166,6 +166,21 @@ int main(int argc, char const *argv[])
 			parse_table[row][col] = prod_num;
 		}
 
+		// Print parse table
+		cout<<"Parsing Table: \n";
+		cout<<"   ";
+		for(auto i = terms.begin(); i != terms.end(); ++i) {
+			cout<<*i<<" ";
+		}
+		cout<<"\n";
+		for(auto row = non_terms.begin(); row != non_terms.end(); ++row) {
+			cout<<*row<<"  ";
+			for(int col = 0; col < terms.size(); ++col) {
+				int row_num = distance(non_terms.begin(), row);
+				cout<<parse_table[row_num][col]<<" ";
+			}
+			cout<<"\n";
+		}
 	}
 
 	return 0;
