@@ -123,7 +123,8 @@ int main(int argc, char const *argv[])
 	cout<<"\n\n";
 
 
-	int parse_table[non_terms.size()][terms.size()] = { -1 };
+	int parse_table[non_terms.size()][terms.size()];
+	fill(&parse_table[0][0], &parse_table[0][0] + sizeof(parse_table)/sizeof(parse_table[0][0]), -1);
 	for(auto prod = gram.begin(); prod != gram.end(); ++prod) {
 		string rhs = prod->second;
 
@@ -156,7 +157,7 @@ int main(int argc, char const *argv[])
 
 
 		for(auto ch = next_list.begin(); ch != next_list.end(); ++ch) {
-			int row = distance(non_terms.begin(), non_terms.find(*ch));
+			int row = distance(non_terms.begin(), non_terms.find(prod->first));
 			int col = distance(terms.begin(), terms.find(*ch));
 			int prod_num = distance(gram.begin(), prod);
 			if(parse_table[row][col] != -1) {
@@ -166,21 +167,25 @@ int main(int argc, char const *argv[])
 			parse_table[row][col] = prod_num;
 		}
 
-		// Print parse table
-		cout<<"Parsing Table: \n";
-		cout<<"   ";
-		for(auto i = terms.begin(); i != terms.end(); ++i) {
-			cout<<*i<<" ";
+	}
+	// Print parse table
+	cout<<"Parsing Table: \n";
+	cout<<"   ";
+	for(auto i = terms.begin(); i != terms.end(); ++i) {
+		cout<<*i<<" ";
+	}
+	cout<<"\n";
+	for(auto row = non_terms.begin(); row != non_terms.end(); ++row) {
+		cout<<*row<<"  ";
+		for(int col = 0; col < terms.size(); ++col) {
+			int row_num = distance(non_terms.begin(), row);
+			if(parse_table[row_num][col] == -1) {
+				cout<<"- ";
+				continue;
+			}
+			cout<<parse_table[row_num][col]<<" ";
 		}
 		cout<<"\n";
-		for(auto row = non_terms.begin(); row != non_terms.end(); ++row) {
-			cout<<*row<<"  ";
-			for(int col = 0; col < terms.size(); ++col) {
-				int row_num = distance(non_terms.begin(), row);
-				cout<<parse_table[row_num][col]<<" ";
-			}
-			cout<<"\n";
-		}
 	}
 
 	return 0;
