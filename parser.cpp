@@ -37,6 +37,7 @@ int main(int argc, char const *argv[])
 
 	cout<<"Grammar parsed from grammar file: \n";
 	vector< pair<char, string> > gram;
+	int count = 0;
 	while(!grammar_file.eof()) {
 		char buffer[20];
 		grammar_file.getline(buffer, 19);
@@ -45,7 +46,7 @@ int main(int argc, char const *argv[])
 		string rhs = buffer+3;
 		pair <char, string> prod (lhs, rhs);
 		gram.push_back(prod);
-		cout<<gram.back().first<<" -> "<<gram.back().second<<"\n";
+		cout<<count++<<".  "<<gram.back().first<<" -> "<<gram.back().second<<"\n";
 	}
 	cout<<"\n";
 

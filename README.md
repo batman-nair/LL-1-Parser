@@ -26,11 +26,11 @@ g++ parser.c -o parser
 Output:
 ```text
 Grammar parsed from grammar file: 
-S -> AB
-A -> a
-A -> e
-B -> b
-B -> e
+0.  S -> AB
+1.  A -> a
+2.  A -> e
+3.  B -> b
+4.  B -> e
 
 The non terminals in the grammar are: A B S 
 The terminals in the grammar are: $ a b 
