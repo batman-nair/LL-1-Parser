@@ -58,6 +58,23 @@ int main(int argc, char const *argv[])
 	for(auto i = non_terms.begin(); i != non_terms.end(); ++i) {
 		cout<<*i<<" ";
 	}
+	cout<<"\n";
+	// Gather all terminals
+	set<char> terms;
+	for(auto i = gram.begin(); i != gram.end(); ++i) {
+		for(auto ch = i->second.begin(); ch != i->second.end(); ++ch) {
+			if(!isupper(*ch)) {
+				terms.insert(*ch);
+			}
+		}
+	}
+	// Remove epsilon and add end character $
+	terms.erase(terms.find('e'));
+	terms.insert('$');
+	cout<<"The terminals in the grammar are: ";
+	for(auto i = terms.begin(); i != terms.end(); ++i) {
+		cout<<*i<<" ";
+	}
 	cout<<"\n\n";
 
 
@@ -103,7 +120,53 @@ int main(int argc, char const *argv[])
 		}
 		cout<<"\n";
 	}
-	cout<<"\n";
+	cout<<"\n\n";
+
+
+	int parse_table[non_terms.size()][terms.size()] = { -1 };
+	for(auto prod = gram.begin(); prod != gram.end(); ++prod) {
+		string rhs = prod->second;
+
+		set<char> next_list;
+		bool finished = false;
+		for(auto ch = rhs.begin(); ch != rhs.end(); ++ch) {
+			if(!isupper(*ch)) {
+				if(*ch != 'e') {
+					next_list.insert(*ch);
+					finished = true;
+					break;
+				}
+				continue;
+			}
+
+			set<char> firsts_copy(firsts[*ch].begin(), firsts[*ch].end());
+			if(firsts_copy.find('e') == firsts_copy.end()) {
+				next_list.insert(firsts_copy.begin(), firsts_copy.end());
+				finished = true;
+				break;
+			}
+			firsts_copy.erase(firsts_copy.find('e'));
+			next_list.insert(firsts_copy.begin(), firsts_copy.end());
+		}
+		// If the whole rhs can be skipped through epsilon or reaching the end
+		// Add follow to next list
+		if(ch == rhs.end() && !finished) {
+			next_list.insert(follows[prod->first]);
+		}
+
+
+		for(auto ch = next_list.begin(); ch != next_list.end(); ++ch) {
+			int row = non_terms.find(*ch) - non_terms.begin();
+			int col = terms.find(*ch) - terms.begin();
+			int prod_num = prod - gram.begin();
+			if(parse_table[row][col] != -1) {
+				cout<<"Collision at ["<<row<<"]["<<col<<"] for production "<<prod_num<<"\n";
+				continue;
+			}
+			parse_table[row][col] = prod_num;
+		}
+
+	}
 
 	return 0;
 }
