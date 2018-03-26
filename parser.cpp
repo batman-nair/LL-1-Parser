@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <stack>
 
 using namespace std;
 
@@ -120,7 +121,7 @@ int main(int argc, char const *argv[])
 		}
 		cout<<"\n";
 	}
-	cout<<"\n\n";
+	cout<<"\n";
 
 
 	int parse_table[non_terms.size()][terms.size()];
@@ -186,6 +187,66 @@ int main(int argc, char const *argv[])
 			cout<<parse_table[row_num][col]<<" ";
 		}
 		cout<<"\n";
+	}
+	cout<<"\n";
+
+
+	string input_string(argv[2]);
+	input_string.push_back('$');
+	stack<char> st;
+	st.push('$');
+	st.push('S');
+
+	// Check if input string is valid
+	for(auto ch = input_string.begin(); ch != input_string.end(); ++ch) {
+		if(terms.find(*ch) == terms.end()) {
+			cout<<"Input string is invalid\n";
+			return 2;
+		}
+	}
+
+	// cout<<"Processing input string\n";
+	bool accepted = true;
+	while(!st.empty() && !input_string.empty()) {
+		// If stack top same as input string char remove it
+
+		if(input_string[0] == st.top()) {
+			st.pop();
+			input_string.erase(0, 1);
+		}
+		else if(!isupper(st.top())) {
+			cout<<"Unmatched terminal found\n";
+			accepted = false;
+			break;
+		}
+		else {
+			char stack_top = st.top();
+			int row = distance(non_terms.begin(), non_terms.find(stack_top));
+			int col = distance(terms.begin(), terms.find(input_string[0]));
+			int prod_num = parse_table[row][col];
+
+			if(prod_num == -1) {
+				cout<<"No production found in parse table\n";
+				accepted = false;
+				break;
+			}
+
+			st.pop();
+			string rhs = gram[prod_num].second;
+			if(rhs[0] == 'e') {
+				continue;
+			}
+			for(auto ch = rhs.rbegin(); ch != rhs.rend(); ++ch) {
+				st.push(*ch);
+			}
+		}
+	}
+
+	if(accepted) {
+		cout<<"Input string is accepted\n";
+	}
+	else {
+		cout<<"Input string is rejected\n";
 	}
 
 	return 0;
