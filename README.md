@@ -24,7 +24,7 @@ g++ parser.c -o parser
 ```
 
 Output:
-```bash
+```text
 Grammar parsed from grammar file: 
 S -> AB
 A -> a
